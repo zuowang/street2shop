@@ -22,11 +22,11 @@ def main(args):
     def download(item_id, url, i, images_dir=''):
 
         try:
-            ret = os.system("axel -q -n 10 -o " + item_id + " " + url)
+            ret = os.system("axel -q -n 10 -o " + item_id + " \"" + url + "\"")
             if ret == 0:
                 image_type = imghdr.what(item_id)
                 if image_type is not None:
-                    os.system("mv " + item_id + " images/" + item_id + '.' +image_type)
+                    os.system("mv " + item_id + " " + images_dir + "/" + item_id + '.' +image_type)
                 else:
                     logging.error('%s\t%s\tunknown_type' % (item_id, url))
             else:
