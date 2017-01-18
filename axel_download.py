@@ -20,7 +20,7 @@ def main(args):
 
 
     @threads(args.threads)
-    def download(item_id, url, i, images_dir=''):
+    def download(item_id, url, i, images_dir='', fails=None):
 
         f = glob.glob(images_dir + "/" + item_id + "*")
         if f:
@@ -33,8 +33,10 @@ def main(args):
                     os.system("mv " + item_id + " " + images_dir + "/" + item_id + '.' +image_type)
                 else:
                     logging.error('%s\t%s\tunknown_type' % (item_id, url))
+                    fails.write(item_id + "," + url)
             else:
                 logging.error('%s\t%s\tstatus:%d' % (item_id, url, ret))
+                fails.write(item_id + "," + url)
         except KeyboardException:
             raise
         except:
@@ -46,6 +48,7 @@ def main(args):
             print i
 
 
+    fails = open(args.failures)
     f = open(args.urls)
 
     itr = enumerate(f)
@@ -53,7 +56,7 @@ def main(args):
 
     for i, line in itr:
         [item_id, url] = split(line.strip())
-        download(item_id, url, i, images_dir=args.images_dir)
+        download(item_id, url, i, images_dir=args.images_dir, fail_file=fails)
 
 
 
