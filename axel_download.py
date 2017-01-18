@@ -5,6 +5,7 @@ import os
 from itertools import islice
 import sys
 import logging
+import glob
 
 
 def split(x):
@@ -21,8 +22,11 @@ def main(args):
     @threads(args.threads)
     def download(item_id, url, i, images_dir=''):
 
+        f = glob.glob(images_dir + "/" + item_id + "*")
+        if f:
+            return
         try:
-            ret = os.system("axel -q -n 10 -o " + item_id + " \"" + url + "\"")
+            ret = os.system("./proxychains-ng/proxychains4 -q -f ./proxychains-ng/src/proxychains.conf axel -q -n 10 -o " + item_id + " \"" + url + "\"")
             if ret == 0:
                 image_type = imghdr.what(item_id)
                 if image_type is not None:
